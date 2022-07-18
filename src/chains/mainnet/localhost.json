@@ -1,0 +1,18 @@
+{
+    "chain_name": "localhost",
+    "coingecko": "cosmos",
+    "api": ["http://0.0.0.0:1317"],
+    "rpc": ["http://0.0.0.0:26657"],
+    "sdk_version": "0.0.0",
+    "coin_type": "0",
+    "min_tx_fee": "800",
+    "addr_prefix": "cosmos",
+    "logo": "/logos/cosmos.svg",
+    "assets": [{
+        "base": "token",
+        "symbol": "TOKEN",
+        "exponent": "0",
+        "coingecko_id": "cosmos",
+        "logo": "/logos/cosmos.svg"
+    }]
+}
