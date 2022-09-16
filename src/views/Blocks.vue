@@ -132,7 +132,7 @@ export default {
       this.blocks.push(res)
       const list = []
       const { height } = res.block.header
-      for (let i = 1; i < 10; i += 1) {
+      for (let i = 1; i < 100; i += 1) {
         list.push(height - i)
       }
 
@@ -173,7 +173,7 @@ export default {
           this.blocks.unshift(b)
           this.extractTx(b)
         }
-        if (this.blocks.length > 200) this.blocks.pop()
+        if (this.blocks.length > 2000) this.blocks.pop()
       })
     },
     extractTx(block, direction = 'head') {

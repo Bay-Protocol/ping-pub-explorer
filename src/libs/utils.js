@@ -449,6 +449,10 @@ export function formatTokenAmount(tokenAmount, decimals = 2, tokenDenom = 'uatom
   return parseFloat(amount.toFixed(exp))
 }
 
+export function isLocalhost() {
+  return Boolean(process.env.VUE_APP_LOCALHOST)
+}
+
 export function isTestnet() {
   return (window.location.hostname.startsWith('testnet')
     || window.location.search.indexOf('testnet') > -1)
