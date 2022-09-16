@@ -113,6 +113,11 @@ export function addressEnCode(prefix, pubkey) {
   return toBech32(prefix, pubkey)
 }
 
+export function getModuleAddress(prefix, name) {
+  const nameBytes = new TextEncoder().encode(name)
+  return toBech32(prefix.trim(), sha256(nameBytes).slice(0, 20))
+}
+
 export function getUserCurrency() {
   const currency = localStorage.getItem('currency')
   return currency || 'usd'

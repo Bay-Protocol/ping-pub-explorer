@@ -50,6 +50,7 @@ import { BFormInput, BFormText } from 'bootstrap-vue'
 import { ref } from '@vue/composition-api'
 import { title } from '@core/utils/filter'
 import store from '@/store'
+import { getModuleAddress } from '@/libs/utils'
 
 export default {
   components: {
@@ -96,7 +97,14 @@ export default {
         } else if (addr.test(key)) {
           this.$router.push({ name: 'chain-account', params: { chain: c.chain_name, address: key } })
         } else {
-          this.error = 'The input not recognized'
+          const keyPair = key.split(':')
+          if (keyPair.length === 2) {
+            const [prefix, moduleName] = keyPair
+            const address = getModuleAddress(prefix.trim(), moduleName.trim())
+            this.$router.push({ name: 'chain-account', params: { chain: c.chain_name, address } })
+          } else {
+            this.error = 'The input not recognized'
+          }
         }
       }
       // this.$router.push('/')

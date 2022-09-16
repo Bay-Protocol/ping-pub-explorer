@@ -99,6 +99,21 @@
         <object-field-component :tablefield="item" />
       </b-card-body>
     </b-card>
+
+    <b-card
+      v-if="tx.logs"
+      :title="`Events (total: ${tx.logs.length})`"
+      no-body
+    >
+      <b-card-body
+        v-for="(item, i) in tx.logs "
+        id="event"
+        :key="i"
+        class="event"
+      >
+        <object-field-component :tablefield="item" />
+      </b-card-body>
+    </b-card>
   </div>
 </template>
 
@@ -143,6 +158,7 @@ export default {
     this.$http.getTxs(hash).then(res => {
       this.error = null
       this.tx = res
+      console.log(res)
     }).catch(err => {
       this.error = err
     })

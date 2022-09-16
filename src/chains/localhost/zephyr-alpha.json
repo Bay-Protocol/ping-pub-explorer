@@ -1,16 +1,48 @@
 {
-    "chain_name": "zephyr-alpha",
-    "api": ["http://0.0.0.0:1317"],
-    "rpc": ["http://0.0.0.0:26657"],
-    "sdk_version": "0.0.0",
-    "coin_type": "0",
-    "min_tx_fee": "800",
-    "addr_prefix": "zephyr",
-    "logo": "/logos/cosmos.svg",
-    "assets": [{
-        "base": "token",
-        "symbol": "TOKEN",
-        "exponent": "2",
-        "logo": "/logos/cosmos.svg"
-    }]
+  "chain_name": "zephyr-alpha",
+  "api": ["http://0.0.0.0:1317"],
+  "rpc": ["http://0.0.0.0:26657"],
+  "sdk_version": "0.0.0",
+  "coin_type": "0",
+  "min_tx_fee": "800",
+  "addr_prefix": "zephyr",
+  "logo": "/logos/cosmos.svg",
+  "assets": [
+    {
+      "base": "token",
+      "symbol": "TOKEN",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    },
+    {
+      "base": "sand",
+      "symbol": "SAND",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    },
+    {
+      "base": "stake",
+      "symbol": "STAKE",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    },
+    {
+      "base": "busd",
+      "symbol": "BUSD",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    },
+    {
+      "base": "atom",
+      "symbol": "ATOM",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    },
+    {
+      "base": "zusd",
+      "symbol": "ZUSD",
+      "exponent": "2",
+      "logo": "/logos/cosmos.svg"
+    }
+  ]
 }
