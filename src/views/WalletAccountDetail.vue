@@ -161,7 +161,7 @@
         </b-card-body>
       </b-card>
       <b-card
-        v-if="delegations"
+        v-if="isOwner"
       >
         <b-card-header class="pt-0 pl-0 pr-0">
           <b-card-title>Delegation</b-card-title>
@@ -235,35 +235,60 @@
         </b-card-body>
       </b-card>
 
-      <b-card title="Transactions">
-        <b-table
-          :items="txs"
-          striped
-          hover
-          responsive="sm"
-          stacked="sm"
-        >
-          <template #cell(height)="data">
-            <router-link :to="`../blocks/${data.item.height}`">
-              {{ data.item.height }}
-            </router-link>
-          </template>
-          <template #cell(txhash)="data">
-            <router-link :to="`../tx/${data.item.txhash}`">
-              {{ formatHash(data.item.txhash) }}
-            </router-link>
-          </template>
-        </b-table>
+      <b-card>
+        <b-card-header class="pt-0 pl-0 pr-0">
+          <b-card-title>Transactions</b-card-title>
+          <div>
+            <b-input-group size="sm">
+              <template #prepend>
+                <b-dropdown size="sm" text="Event" variant="outline-primary">
+                  <b-dropdown-item v-for="event in expectedEvents"
+                    :key="event"
+                    @click="updateTxs(event)" >{{ event }}</b-dropdown-item>
+                </b-dropdown>
+              </template>
+              <b-form-input v-model="txsEvent"></b-form-input>
+              <b-input-group-append>
+                <b-button
+                  variant="primary"
+                  @click="updateTxs()"
+                >
+                  Get
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </div>
+        </b-card-header>
+        <b-card-body class="pl-0 pr-0">
+          <b-table
+            :items="txs"
+            striped
+            hover
+            responsive="sm"
+            stacked="sm"
+          >
+            <template #cell(height)="data">
+              <router-link :to="`../blocks/${data.item.height}`">
+                {{ data.item.height }}
+              </router-link>
+            </template>
+            <template #cell(txhash)="data">
+              <router-link :to="`../tx/${data.item.txhash}`">
+                {{ formatHash(data.item.txhash) }}
+              </router-link>
+            </template>
+          </b-table>
 
-        <b-pagination
-          v-if="Number(transactions.page_total) > 1"
-          :total-rows="transactions.total_count"
-          :per-page="transactions.limit"
-          :value="transactions.page_number"
-          align="center"
-          class="mt-1"
-          @change="pageload"
-        />
+          <b-pagination
+            v-if="Number(transactions.page_total) > 1"
+            :total-rows="transactions.total_count"
+            :per-page="transactions.limit"
+            :value="transactions.page_number"
+            align="center"
+            class="mt-1"
+            @change="pageload"
+          />
+        </b-card-body>
       </b-card>
 
       <b-card
@@ -418,7 +443,7 @@ import { $themeColors } from '@themeConfig'
 import dayjs from 'dayjs'
 import {
   BCard, BAvatar, BPopover, BTable, BRow, BCol, BTableSimple, BTr, BTd, BTbody, BCardHeader, BCardTitle, BButton, BCardBody, VBModal,
-  BButtonGroup, VBTooltip, BPagination,
+  BButtonGroup, VBTooltip, BPagination, BInputGroup, BFormInput, BInputGroupAppend, BDropdown, BDropdownItem,
 } from 'bootstrap-vue'
 import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -427,7 +452,7 @@ import VueQr from 'vue-qr'
 import chainAPI from '@/libs/fetch'
 import {
   formatToken, formatTokenAmount, formatTokenDenom, getStakingValidatorOperator, percent, tokenFormatter, toDay,
-  toDuration, abbrMessage, abbrAddress, getUserCurrency, getUserCurrencySign, numberWithCommas, toETHAddress,
+  toDuration, abbrMessage, abbrAddress, getUserCurrency, getUserCurrencySign, numberWithCommas, toETHAddress, getLocalAccounts,
 } from '@/libs/utils'
 import OperationModal from '@/views/components/OperationModal/index.vue'
 import ObjectFieldComponent from './components/ObjectFieldComponent.vue'
@@ -453,6 +478,11 @@ export default {
     BTr,
     BTd,
     BPagination,
+    BInputGroup,
+    BFormInput,
+    BInputGroupAppend,
+    BDropdown,
+    BDropdownItem,
     // eslint-disable-next-line vue/no-unused-components
     ToastificationContent,
     ObjectFieldComponent,
@@ -470,9 +500,9 @@ export default {
     if (address !== from.params.hash) {
       this.address = address
       this.$http.getAuthAccount(this.address).then(acc => {
-        this.account = acc
+        this.account = acc.account
         this.initial()
-        this.$http.getTxsBySender(this.address).then(res => {
+        this.$http.getTxsByEvent(this.txsEvent, this.address).then(res => {
           this.transactions = res
         })
       }).catch(err => {
@@ -496,6 +526,14 @@ export default {
       unbonding: [],
       quotes: {},
       transactions: [],
+      txsEvent: 'message.sender',
+      expectedEvents: [
+        'message.sender',
+        'transfer.sender',
+        'transfer.recipient',
+        'coin_received.receiver',
+        'coin_spent.spender',
+      ],
       stakingParameters: {},
       operationModalType: '',
       error: null,
@@ -507,6 +545,17 @@ export default {
         return this.account.type.substring(this.account.type.indexOf('/') + 1)
       }
       return 'Profile'
+    },
+    isOwner() {
+      const accounts = getLocalAccounts()
+      const selectedWallet = this.$store.state.chains.defaultWallet
+      if (accounts) {
+        const account = accounts[selectedWallet]
+        if (account?.address.findIndex(x => x.addr === this.address) > -1) {
+          return true
+        }
+      }
+      return false
     },
     txs() {
       if (this.transactions.txs) {
@@ -653,7 +702,7 @@ export default {
     this.$http.getAuthAccount(this.address).then(acc => {
       this.account = acc.account
       this.initial()
-      this.$http.getTxsBySender(this.address).then(res => {
+      this.$http.getTxsByEvent(this.txsEvent, this.address).then(res => {
         this.transactions = res
       })
       this.$http.getStakingParameters().then(res => {
@@ -695,8 +744,16 @@ export default {
     formatNumber(v) {
       return numberWithCommas(v)
     },
+    updateTxs(event) {
+      if (event) {
+        this.txsEvent = event
+      }
+      this.$http.getTxsByEvent(this.txsEvent, this.address).then(res => {
+        this.transactions = res
+      })
+    },
     pageload(v) {
-      this.$http.getTxsBySender(this.address, v).then(res => {
+      this.$http.getTxsByEvent(this.txsEvent, this.address, v).then(res => {
         this.transactions = res
       })
     },
