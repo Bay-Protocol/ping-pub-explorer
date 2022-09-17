@@ -27,7 +27,7 @@
       <b-form-input
         v-if="showSearchBar"
         v-model="searchQuery"
-        placeholder="Search Height/Transaction/Account Address"
+        placeholder="Search Height/Transaction/Account Address/Prefix:ModuleName"
         :state="false"
         autocomplete="off"
         @keyup.enter="doQuery"
@@ -83,6 +83,7 @@ export default {
       this.error = null
     },
     doQuery() {
+      this.error = null
       const height = /^\d+$/
       const txhash = /^[A-Z\d]{64}$/
       const addr = /^[a-z]+1[a-z\d]{38}$/

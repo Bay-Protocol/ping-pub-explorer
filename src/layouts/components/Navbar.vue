@@ -84,8 +84,8 @@
     <!-- <dark-Toggler class="d-none d-lg-block" /> -->
     <!-- Right Col -->
     <b-navbar-nav class="nav align-items-center ml-auto">
-      <dark-Toggler class="d-none d-lg-block" />
       <search-bar />
+      <dark-Toggler class="d-none d-lg-block" />
       <locale />
       <b-dropdown
         class="ml-1"

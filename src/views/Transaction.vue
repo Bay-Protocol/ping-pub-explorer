@@ -158,7 +158,6 @@ export default {
     this.$http.getTxs(hash).then(res => {
       this.error = null
       this.tx = res
-      console.log(res)
     }).catch(err => {
       this.error = err
     })
