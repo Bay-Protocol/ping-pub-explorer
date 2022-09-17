@@ -107,7 +107,6 @@
     >
       <b-card-body
         v-for="(item, i) in tx.logs "
-        id="event"
         :key="i"
         class="event"
       >
@@ -170,15 +169,19 @@ export default {
 </script>
 
 <style>
-#message {
+.message {
     border-top-width: 2px;
     border-top-style: double;
 }
-#message table.table-hover tr td:hover {
+.message table.table-hover tr td:hover {
   border-style: solid;
   border-color: green;
 
     border: double;
     border-radius: 0.5px;
+}
+.event {
+    border-top-width: 2px;
+    border-top-style: double;
 }
 </style>
