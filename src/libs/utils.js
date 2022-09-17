@@ -384,7 +384,7 @@ export function isToken(value) {
   let is = false
   if (Array.isArray(value)) {
     is = value.findIndex(x => Object.keys(x).includes('denom')) > -1
-  } else {
+  } else if (value) {
     is = Object.keys(value).includes('denom')
   }
   return is
